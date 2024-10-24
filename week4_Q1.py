@@ -5,7 +5,8 @@
 
 
 def list_creator(reverse: bool = False) -> None: 
-    my_list: list[str] = ["cat", "dog", "rabbit", "snake"] 
+    my_list: list[str] = ["cat", 1, "rabbit", "snake"] 
+    print (my_list.reverse)
     if not reverse:
         for pet in my_list:
             print(pet)
