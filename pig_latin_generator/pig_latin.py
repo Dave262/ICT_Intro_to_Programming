@@ -19,7 +19,7 @@ class PigLatinGenerator(ctk.CTk):
     
 # Import of functions from controller
     self._controller = TextConvert()
-    sentence: str = self._controller.get_text
+    
         
     
     
@@ -61,24 +61,26 @@ class PigLatinGenerator(ctk.CTk):
     self.footer_frame.grid(row=2, columnspan=2, padx=1, pady=1, sticky="nswe")
     
 # Convert Button    
-    self.convert_button = ctk.CTkButton(master=self.footer_frame, text="Convert text!", fg_color=Colour.NORD.value, command=lambda: self._controller.convert_sentence(sentence)) # this calls the main controller
+    self.convert_button = ctk.CTkButton(master=self.footer_frame, text="Convert text!", fg_color=Colour.NORD.value, command=lambda: self.process_input(self.entry_textbox)) # this calls the main controller
     self.convert_button.pack(pady=10)
     self.convert_button.configure(fg_color=Colour.PINK.value)
     
-    
-    self.show_text_button = ctk.CTkButton(master=self.footer_frame, text="Show text", fg_color=Colour.NORD.value, command=lambda: self._controller.get_text(self.entry_textbox)) # this calls the main controller IMPORTANT to use lambda so it doesn't call once on load and then not work again
-    self.show_text_button.pack(pady=10)
-    self.show_text_button.configure(fg_color=Colour.PINK.value)
+
     
 
 
-  def populate_output(self):
-    text = self._controller.convert_sentence()
-    print(text)
-    self.output_textbox.delete("1.0", "end")
-    self.output_textbox.insert(index="1.0", text=f"{text}")
+  def populate_output(self, converted_text):
+      print(converted_text)  # Debug print for the converted text
+      self.output_textbox.delete("1.0", "end")  # Clear the output textbox
+      self.output_textbox.insert("1.0", converted_text)
     
-    
+  
+  
+  def process_input(self, textbox):
+    input_text = self._controller.get_text(self.entry_textbox)
+    converted_text = self._controller.convert_sentence(input_text)
+    self.populate_output(converted_text)
+  
     
     
     
