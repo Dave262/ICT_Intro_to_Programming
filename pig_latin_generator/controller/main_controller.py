@@ -55,11 +55,7 @@ class TextConvert:
         
         return " ".join(pig_latin_words)
         
-      
 
-      
-      
-      
       
 if __name__=="__main__":
   controller = TextConvert()
