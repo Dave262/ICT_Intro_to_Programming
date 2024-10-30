@@ -1,69 +1,75 @@
 import re
+import string
+
 
 class TextConvert:
-      def __init__(self):
-        super().__init__()
-        
-        
-        self.vowels = "aeiouAEIOU"
-        
+    def __init__(self, txt_file):
+        self.txt_file = txt_file
 
-        
-      def get_text(self, textbox):
-        
-        input_sentence:str = textbox.get('1.0', "end").strip() 
-        print(input_sentence)
-        return input_sentence
-        
-      
-      
-      def convert_to_pig_latin(self, word):
-          # Preserve punctuation (e.g., "hello!" becomes "ellohay!")
-          match = re.match(r"([a-zA-Z]+)([^a-zA-Z]*)", word)  # Split word from punctuation
-          if not match:
-              return word  # If no match, return the word as is
+        self.capital_dict = {}
+        self.pig_list = []
 
-          word_body, punctuation = match.groups()
+    def translate_word(self, word):
+        vowels = ["a", "e", "i", "o", "u"]
+        if word[0] in vowels:
+            return word + "yay"
 
-          # Handle words starting with vowels
-          if word_body[0] in self.vowels:
-              pig_latin_word = word_body + "way"
-          else:
-              # Find where the first vowel is located in the word
-              for i, letter in enumerate(word_body):
-                  if letter in self.vowels:
-                      # Move the consonant cluster to the end and add 'ay'
-                      pig_latin_word = word_body[i:] + word_body[:i] + "ay"
-                      break
-              else:
-                  # If no vowel is found, treat it as a single consonant word
-                  pig_latin_word = word_body + "ay"
+        for i in range(len(word)):
+            if word[i] in vowels:
+                return word[i:] + word[:i] + "ay"
 
-          # Retain capitalization
-          if word_body[0].isupper():
-              pig_latin_word = pig_latin_word.capitalize()
+        return word + "ay"  # No vowels found
 
-          # Return the word with punctuation re-attached
-          return pig_latin_word + punctuation
+    def get_text(self):
+        with open(self.txt_file, "r") as txt_file:
+            output = txt_file.read()
 
-          
-      def convert_sentence(self, sentence):
-        words = sentence.split()
-        # Convert each word in the sentence
-        pig_latin_words = [self.convert_to_pig_latin(word) for word in words if word]
-        print(f"the sentence has been converted")
-        
-        return " ".join(pig_latin_words)
-        
+        # Updated regex to capture words separately from punctuation
+        regex_pattern = r"(\b[\w'-]+)([.,!?;]?)"
+        individual_words = re.findall(regex_pattern, output)
+        # Construct final result by appending word and punctuation
+        list_of_words_and_punct = [
+            word + punctuation for word, punctuation in individual_words
+        ]
 
-      
-if __name__=="__main__":
-  controller = TextConvert()
-  get_text = controller.get_text("just some text")
-  convert_sentece = controller.convert_sentence(get_text)
-  print(convert_sentece)
-       
+        # print(list_of_words_and_punct)
+        return list_of_words_and_punct
 
-            
-        
-        
+    def convert_words(self):
+        lsit_of_words = self.get_text()
+
+        for word in lsit_of_words:
+            # handles word that is upper case and also ends with punctuation.
+            if word[0].isupper() and word.endswith(tuple(string.punctuation)):
+                punctuation = word[-1]  # store punctuation
+                word = word[:-1]  # remove punctuation
+                word = word.lower()
+                pig_word = self.translate_word(word)
+                pig_word = pig_word[0].upper() + pig_word[1:]
+                # print (pig_word + punctuation)
+                self.pig_list.append(pig_word + punctuation)
+            # handels upper case words
+            elif word[0].isupper():
+                word = word.lower()
+                pig_word = self.translate_word(word)
+                pig_word = pig_word[0].upper() + pig_word[1:]
+
+                # print(pig_word)
+                self.pig_list.append(pig_word)
+            # handles lower case words with punctuation
+            elif word.endswith(tuple(string.punctuation)):
+                punctuation = word[-1]  # store punctuation
+                word = word[:-1]  # remove punctuation
+                word = word.lower()
+                pig_word = self.translate_word(word)
+                # print(pig_word + punctuation)
+                self.pig_list.append(pig_word + punctuation)
+            # handles lower case words with no punctuation
+            else:
+                pig_word = self.translate_word(word)
+                self.pig_list.append(pig_word)
+
+        pig_string = " ".join(self.pig_list)
+        print(pig_string)
+
+    # convert_words()
