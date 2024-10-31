@@ -18,14 +18,9 @@ class PigLatinGenerator(ctk.CTk):
 
 
 
-#------------------------
-#
-#------------------------
         # Import of functions from controller
-        self._controller = TextConvert(txt_file=None)
-# ------------------------
-#
-# ------------------------
+        self._controller = TextConvert
+
 
         self.grid_rowconfigure(index=(0, 3), weight=0)
         self.grid_rowconfigure(index=(1), weight=1)
@@ -93,13 +88,20 @@ class PigLatinGenerator(ctk.CTk):
             output = text.read()
             
         self.entry_textbox.insert(index="1.0", text=output)
-        self.entry_textbox.configure(font=("Inclusive Sans", 15))
+        self.entry_textbox.configure(font=("Inclusive Sans", 12))
 
     def populate_output(self):
-        converted_text = self._controller(self.txt_file)
-        print(converted_text)
+        print(self.txt_file)
+        if self.txt_file:
+            converter = self._controller(self.txt_file)
+            converted_text = converter.pig_string
+            self.output_textbox.delete("1.0", "end")
+            self.output_textbox.insert("1.0", converted_text)
+            self.output_textbox.configure(font=("Inclusive Sans", 12))
+
+
         
 
 # initiate the GUI
-app = PigLatinGenerator()#
+app = PigLatinGenerator()
 app.mainloop()
